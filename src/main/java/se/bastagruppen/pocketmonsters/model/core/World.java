@@ -32,7 +32,7 @@ public final class World {
         forest3.addPaths(Map.of(EAST, forest2, SOUTH, forest4));
         forest4.addPaths(Map.of(NORTH, forest3, EAST, forest1));
 
-        START = viridianCity;
+        START = palletTown;
     }
 
     private World() {}
