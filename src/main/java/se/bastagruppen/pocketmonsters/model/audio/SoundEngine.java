@@ -12,6 +12,8 @@ import static javax.sound.sampled.Clip.LOOP_CONTINUOUSLY;
 public final class SoundEngine {
 
     private Clip audioClip;
+    private volatile boolean playing;
+
     private final URL audioURL;
     private final int startLoopPoint;
     private final int endLoopPoint;
@@ -35,6 +37,10 @@ public final class SoundEngine {
         this(fileName, 0, LOOP_CONTINUOUSLY);
     }
 
+    public boolean isPlaying() {
+        return playing;
+    }
+
     private void openAudioClip() {
         try {
             AudioInputStream audioInputStream = getAudioInputStream(requireNonNull(audioURL));
@@ -55,7 +61,18 @@ public final class SoundEngine {
         }
     }
 
-    public void play() {
+    public synchronized void play() {
+        while (playing) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            }
+        }
+        playing = true;
+        notifyAll();
+
         openAudioClip();
         audioClip.loop(LOOP_CONTINUOUSLY);
         setLoopPoints();
@@ -63,7 +80,18 @@ public final class SoundEngine {
         audioClip.start();
     }
 
-    public void stop() {
+    public synchronized void stop() {
+        while (!playing) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException(e);
+            }
+        }
+        playing = false;
+        notifyAll();
+
         audioClip.close();
         audioClip.flush();
     }

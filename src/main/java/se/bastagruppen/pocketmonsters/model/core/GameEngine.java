@@ -6,7 +6,8 @@ import se.bastagruppen.pocketmonsters.model.graphics.Graphics;
 import java.util.Random;
 import java.util.Scanner;
 
-import static se.bastagruppen.pocketmonsters.model.core.GameEffects.*;
+import static se.bastagruppen.pocketmonsters.model.core.GameEffects.effectWithSound;
+import static se.bastagruppen.pocketmonsters.model.core.GameEffects.tick;
 
 public final class GameEngine {
 
